@@ -1,0 +1,30 @@
+name: college_recommendation_app
+description: A college recommendation app.
+
+publish_to: 'none' # Remove this line if you want to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.6.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  supabase_flutter: ^2.0.0
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/college_image.jpeg
+    - assets/signup_image.jpg
+    - assets/login_image.jpeg
+    - assets/background.jpeg
+
+
