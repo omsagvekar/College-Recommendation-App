@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,6 +10,35 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool isDarkMode = false;
+  final SupabaseClient supabase = Supabase.instance.client;
+  String userName = '';
+  String userEmail = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    final user = supabase.auth.currentUser;
+    if (user != null) {
+      final response = await supabase
+          .from('users')
+          .select('full_name, email')
+          .eq('id', user.id)
+          .single();
+      setState(() {
+        userName = response['full_name'] ?? 'User Name';
+        userEmail = response['email'] ?? 'user@example.com';
+      });
+    }
+  }
+
+  Future<void> logout() async {
+    await supabase.auth.signOut();
+    // Navigate to login screen or perform other actions
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
           title: const Text('College Recommendation'),
           actions: [
             IconButton(
-              icon: Icon(Icons.search),
+              icon: const Icon(Icons.search),
               onPressed: () {
                 // Keep original search logic
               },
@@ -49,87 +79,45 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Recommended Colleges',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
+              // College Recommendation Button
               SizedBox(
-                height: 220,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      width: 280,
-                      margin: const EdgeInsets.only(right: 16),
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'College ${index + 1}',
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.favorite_border),
-                                    onPressed: () {
-                                      // Keep original favorite logic
-                                    },
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              const Row(
-                                children: [
-                                  Icon(Icons.location_on, size: 16),
-                                  SizedBox(width: 4),
-                                  Text('City, State'),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              const Row(
-                                children: [
-                                  Icon(Icons.star,
-                                      size: 16, color: Colors.amber),
-                                  SizedBox(width: 4),
-                                  Text('4.5 (1.2k reviews)'),
-                                ],
-                              ),
-                              const Spacer(),
-                              Container(
-                                width: double.infinity,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: Colors.blueAccent,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    'View Details',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Add logic for college recommendation
                   },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 40),
+                    backgroundColor: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Get Your College Recommendation',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              // Ranking of Colleges Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Add logic for ranking of colleges
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    backgroundColor: Colors.greenAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Ranking of Colleges',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
@@ -189,6 +177,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Text('4.5', style: TextStyle(fontSize: 12)),
                               ],
                             ),
+                            const SizedBox(height: 8),
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.blueAccent,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  'View Details',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -196,48 +202,82 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
               ),
-            ],
-          ),
-        ),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              UserAccountsDrawerHeader(
-                accountName: const Text('User Name'), // Keep original user data
-                accountEmail:
-                    const Text('user@example.com'), // Keep original user data
-                currentAccountPicture: CircleAvatar(
-                  backgroundColor:
-                      Theme.of(context).brightness == Brightness.dark
-                          ? Colors.grey[800]
-                          : Colors.grey[200],
-                  child: const Icon(Icons.person, size: 40),
-                ),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.grey[800]
-                      : Colors.blueAccent,
-                ),
+              const SizedBox(height: 24),
+
+              // Top Colleges in Maharashtra Table
+              const Text(
+                'Top Colleges in Maharashtra',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              ListTile(
-                leading: Icon(Icons.settings),
-                title: const Text('Dark Mode'),
-                trailing: Switch(
-                  value: isDarkMode,
-                  onChanged: (value) {
-                    setState(() {
-                      isDarkMode = value;
-                    });
-                  },
-                ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.construction),
-                title: const Text('Future Plans'),
-                onTap: () {
-                  // Keep original functionality
+              const SizedBox(height: 16),
+              Table(
+                border: TableBorder.all(color: Colors.black),
+                columnWidths: const {
+                  0: FixedColumnWidth(40),
+                  1: FlexColumnWidth(),
+                  2: FlexColumnWidth(),
+                  3: FixedColumnWidth(50),
                 },
+                children: const [
+                  TableRow(
+                    decoration: BoxDecoration(color: Colors.blueAccent),
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('Rank',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('College Name',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('Location',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('Rating',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  ),
+                  TableRow(children: [
+                    Padding(padding: EdgeInsets.all(8.0), child: Text('1')),
+                    Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('IIT Bombay')),
+                    Padding(
+                        padding: EdgeInsets.all(8.0), child: Text('Mumbai')),
+                    Padding(padding: EdgeInsets.all(8.0), child: Text('4.9')),
+                  ]),
+                  TableRow(children: [
+                    Padding(padding: EdgeInsets.all(8.0), child: Text('2')),
+                    Padding(
+                        padding: EdgeInsets.all(8.0), child: Text('COEP Pune')),
+                    Padding(padding: EdgeInsets.all(8.0), child: Text('Pune')),
+                    Padding(padding: EdgeInsets.all(8.0), child: Text('4.7')),
+                  ]),
+                  TableRow(children: [
+                    Padding(padding: EdgeInsets.all(8.0), child: Text('3')),
+                    Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text('VJTI Mumbai')),
+                    Padding(
+                        padding: EdgeInsets.all(8.0), child: Text('Mumbai')),
+                    Padding(padding: EdgeInsets.all(8.0), child: Text('4.6')),
+                  ]),
+                ],
               ),
             ],
           ),

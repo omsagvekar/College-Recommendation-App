@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'home_screen.dart'; // Import HomeScreen for navigation
+import 'home_screen.dart';
 
 class QuestionsScreen extends StatefulWidget {
   final String userId;
@@ -47,7 +47,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       'question': 'What is your caste category?',
       'field': 'caste_category',
       'options': [
-        'General Category (Open)',
+        'General (Open)',
         'OBC (Other Backward Class)',
         'SC (Scheduled Caste)',
         'ST (Scheduled Tribe)',
@@ -116,76 +116,94 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/background.jpeg'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          SafeArea(
+      backgroundColor: Colors.black, // Matching the Login & Signup screen
+      appBar: AppBar(
+        title: const Text('Questions', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.black,
+        centerTitle: true,
+        elevation: 0,
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Container(
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Text(
-                      questions[currentQuestionIndex]['question'],
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
+                Text(
+                  'Question ${currentQuestionIndex + 1} of ${questions.length}',
+                  style: const TextStyle(fontSize: 16, color: Colors.white70),
+                ),
+                const SizedBox(height: 15),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[900],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    questions[currentQuestionIndex]['question'],
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
+                const SizedBox(height: 20),
+                Column(
                   children: questions[currentQuestionIndex]['options'].map<Widget>((option) {
                     bool isSelected = option == selectedAnswer;
                     return GestureDetector(
                       onTap: () => setState(() => selectedAnswer = option),
                       child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
                         decoration: BoxDecoration(
-                          color: isSelected ? Colors.redAccent : Colors.white.withOpacity(0.8),
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(color: Colors.black, width: 1.5),
+                          color: isSelected ? Colors.blue.shade400 : Colors.grey[800],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: isSelected ? Colors.blue.shade300 : Colors.white38, width: 1.5),
                         ),
-                        child: Text(
-                          option,
-                          style: TextStyle(fontSize: 16, color: isSelected ? Colors.white : Colors.black),
+                        child: Row(
+                          children: [
+                            Icon(
+                              isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                              color: isSelected ? Colors.white : Colors.white70,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                option,
+                                style: const TextStyle(fontSize: 16, color: Colors.white),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );
                   }).toList(),
                 ),
-                Spacer(),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
+                const SizedBox(height: 30),
+                SizedBox(
+                  width: double.infinity,
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.redAccent,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                    ),
                     onPressed: handleNext,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: Colors.blue.shade400,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
                     child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [Text('Next'), Icon(Icons.arrow_forward_ios)],
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Text('Next', style: TextStyle(fontSize: 18, color: Colors.white)),
+                        SizedBox(width: 5),
+                        Icon(Icons.arrow_forward_ios, color: Colors.white),
+                      ],
                     ),
                   ),
                 ),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart'; // Ensure Supabase is initialized
-import 'login_screen.dart'; // Import the LoginScreen
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'login_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -47,7 +47,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           );
 
-          // Navigate to Login Screen after successful signup
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -74,53 +73,48 @@ class _SignUpScreenState extends State<SignUpScreen> {
     required TextEditingController controller,
     bool isPassword = false,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 4,
-            offset: Offset(2, 2),
-          ),
-        ],
-      ),
-      child: TextFormField(
-        controller: controller,
-        obscureText: isPassword,
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: const TextStyle(color: Colors.white70),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          filled: true,
-          fillColor: Colors.grey[900],
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.blue.shade300, width: 2),
-            borderRadius: BorderRadius.circular(12),
-          ),
+    return TextFormField(
+      controller: controller,
+      obscureText: isPassword,
+      style:
+          const TextStyle(color: Colors.black), // Set input text color to black
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.black87), // Label color
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter your $label';
-          }
-          return null;
-        },
+        filled: true,
+        fillColor: Colors.grey[200], // Light grey background for fields
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue.shade900, width: 2),
+          borderRadius: BorderRadius.circular(12),
+        ),
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your $label';
+        }
+        if (label == 'Email' && !value.contains('@')) {
+          return 'Please enter a valid email';
+        }
+        return null;
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white, // White background
       appBar: AppBar(
-        title: const Text('Sign Up', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.grey[900],
+        title: const Text('Sign Up', style: TextStyle(color: Colors.black)),
+        backgroundColor: Colors.white,
+        elevation: 0,
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
-      body: SingleChildScrollView(
+      body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
@@ -129,42 +123,59 @@ class _SignUpScreenState extends State<SignUpScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.asset(
-                  'assets/signup_image.jpg',
-                  width: 150,
-                  height: 150,
+                const Text(
+                  'Create Your Account',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
                 const SizedBox(height: 20),
-                _buildTextField(label: 'Full Name', controller: _nameController),
+                _buildTextField(
+                    label: 'Full Name', controller: _nameController),
                 const SizedBox(height: 15),
                 _buildTextField(label: 'Email', controller: _emailController),
                 const SizedBox(height: 15),
-                _buildTextField(label: 'Password', controller: _passwordController, isPassword: true),
+                _buildTextField(
+                    label: 'Password',
+                    controller: _passwordController,
+                    isPassword: true),
                 const SizedBox(height: 15),
-                _buildTextField(label: 'Confirm Password', controller: _confirmPasswordController, isPassword: true),
-                const SizedBox(height: 20),
+                _buildTextField(
+                    label: 'Confirm Password',
+                    controller: _confirmPasswordController,
+                    isPassword: true),
+                const SizedBox(height: 25),
                 _isLoading
-                    ? CircularProgressIndicator(color: Colors.blue.shade300)
-                    : ElevatedButton(
-                        onPressed: _signUp,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                          backgroundColor: Colors.blue.shade300,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ? CircularProgressIndicator(color: Colors.blue.shade900)
+                    : SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _signUp,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            backgroundColor: Colors.blue.shade900,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                          ),
+                          child: const Text('Sign Up',
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.white)),
                         ),
-                        child: const Text('Sign Up', style: TextStyle(fontSize: 18, color: Colors.black)),
                       ),
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const LoginScreen()),
                     );
                   },
                   child: Text(
                     'Already have an account? Log In',
-                    style: TextStyle(fontSize: 16, color: Colors.blue.shade300),
+                    style: TextStyle(fontSize: 16, color: Colors.blue.shade900),
                   ),
                 ),
               ],
