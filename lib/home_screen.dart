@@ -202,82 +202,54 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
               ),
-              const SizedBox(height: 24),
-
-              // Top Colleges in Maharashtra Table
-              const Text(
-                'Top Colleges in Maharashtra',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ],
+          ),
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              UserAccountsDrawerHeader(
+                accountName: Text(userName),
+                accountEmail: Text(userEmail),
+                currentAccountPicture: CircleAvatar(
+                  backgroundColor:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey[800]
+                          : Colors.grey[200],
+                  child: const Icon(Icons.person, size: 40),
+                ),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey[800]
+                      : Colors.blueAccent,
+                ),
               ),
-              const SizedBox(height: 16),
-              Table(
-                border: TableBorder.all(color: Colors.black),
-                columnWidths: const {
-                  0: FixedColumnWidth(40),
-                  1: FlexColumnWidth(),
-                  2: FlexColumnWidth(),
-                  3: FixedColumnWidth(50),
+              ListTile(
+                leading: const Icon(Icons.edit),
+                title: const Text('Edit Profile'),
+                onTap: () {
+                  // Add logic for editing profile
                 },
-                children: const [
-                  TableRow(
-                    decoration: BoxDecoration(color: Colors.blueAccent),
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Rank',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('College Name',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Location',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Rating',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold)),
-                      ),
-                    ],
-                  ),
-                  TableRow(children: [
-                    Padding(padding: EdgeInsets.all(8.0), child: Text('1')),
-                    Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('IIT Bombay')),
-                    Padding(
-                        padding: EdgeInsets.all(8.0), child: Text('Mumbai')),
-                    Padding(padding: EdgeInsets.all(8.0), child: Text('4.9')),
-                  ]),
-                  TableRow(children: [
-                    Padding(padding: EdgeInsets.all(8.0), child: Text('2')),
-                    Padding(
-                        padding: EdgeInsets.all(8.0), child: Text('COEP Pune')),
-                    Padding(padding: EdgeInsets.all(8.0), child: Text('Pune')),
-                    Padding(padding: EdgeInsets.all(8.0), child: Text('4.7')),
-                  ]),
-                  TableRow(children: [
-                    Padding(padding: EdgeInsets.all(8.0), child: Text('3')),
-                    Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('VJTI Mumbai')),
-                    Padding(
-                        padding: EdgeInsets.all(8.0), child: Text('Mumbai')),
-                    Padding(padding: EdgeInsets.all(8.0), child: Text('4.6')),
-                  ]),
-                ],
+              ),
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text('Dark Mode'),
+                trailing: Switch(
+                  value: isDarkMode,
+                  onChanged: (value) {
+                    setState(() {
+                      isDarkMode = value;
+                    });
+                  },
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.logout),
+                title: const Text('Logout'),
+                onTap: () {
+                  logout();
+                },
               ),
             ],
           ),
