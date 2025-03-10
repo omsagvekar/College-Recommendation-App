@@ -37,7 +37,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> logout() async {
     await supabase.auth.signOut();
-    // Navigate to login screen or perform other actions
+    // Navigate to login screen
+    Navigator.of(context).pushReplacementNamed('/login'); // Adjust this to your actual login route
   }
 
   @override
@@ -148,7 +149,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: isDarkMode ? Colors.white : Colors.indigo[800],
+                            color:
+                                isDarkMode ? Colors.white : Colors.indigo[800],
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -156,13 +158,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           'Find your perfect college match',
                           style: TextStyle(
                             fontSize: 16,
-                            color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                            color: isDarkMode
+                                ? Colors.grey[400]
+                                : Colors.grey[600],
                           ),
                         ),
                       ],
                     ),
                   ),
-                  
+
                   // College Recommendation Card
                   Card(
                     elevation: 8,
@@ -246,9 +250,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Quick Actions Row
                   Row(
                     children: [
@@ -275,9 +279,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Saved Colleges Section
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -299,12 +303,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  
-                  // Saved Colleges Grid
+
+                  // Saved Colleges Grid - FIXED OVERFLOW ISSUE HERE
                   GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      childAspectRatio: 0.8,
+                      childAspectRatio: 0.75, // Increased from 0.8 to give more height
                       mainAxisSpacing: 16,
                       crossAxisSpacing: 16,
                     ),
@@ -322,9 +327,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Trending Colleges Section
                   Text(
                     'Trending Colleges',
@@ -335,7 +340,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   SizedBox(
                     height: 220,
                     child: ListView.builder(
@@ -353,7 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                   ),
-                  
+
                   const SizedBox(height: 40),
                 ],
               ),
@@ -383,7 +388,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   accountEmail: Text(userEmail),
                   currentAccountPicture: CircleAvatar(
-                    backgroundColor: isDarkMode ? Colors.tealAccent : Colors.white,
+                    backgroundColor:
+                        isDarkMode ? Colors.tealAccent : Colors.white,
                     child: Icon(
                       Icons.person,
                       size: 40,
@@ -438,7 +444,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const Divider(),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -479,9 +486,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildDrawerItem(
                   icon: Icons.logout,
                   title: 'Logout',
-                  onTap: () {
-                    logout();
-                  },
+                  onTap: logout, // Using the improved logout function
                 ),
               ],
             ),
@@ -611,7 +616,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Colors.purple[100]!,
       Colors.orange[100]!,
     ];
-    
+
     final List<Color> textColors = [
       Colors.blue[800]!,
       Colors.green[800]!,
@@ -619,8 +624,6 @@ class _HomeScreenState extends State<HomeScreen> {
       Colors.orange[800]!,
     ];
 
-    final bool useDarkColors = !isDarkMode;
-    
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -628,13 +631,16 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Container(
         decoration: BoxDecoration(
-          color: isDarkMode ? Colors.grey[850] : cardColors[index % cardColors.length].withOpacity(0.3),
+          color: isDarkMode
+              ? Colors.grey[850]
+              : cardColors[index % cardColors.length].withOpacity(0.3),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Padding(
           padding: const EdgeInsets.all(14.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min, // Added this to help with sizing
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -645,7 +651,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
-                        color: isDarkMode ? Colors.white : textColors[index % textColors.length],
+                        color: isDarkMode
+                            ? Colors.white
+                            : textColors[index % textColors.length],
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -675,11 +683,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Icon(
                     Icons.school,
                     size: 40,
-                    color: isDarkMode ? Colors.grey[600] : textColors[index % textColors.length],
+                    color: isDarkMode
+                        ? Colors.grey[600]
+                        : textColors[index % textColors.length],
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8), // Reduced from 12 to 8
               Row(
                 children: [
                   Icon(
@@ -688,19 +698,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: isDarkMode ? Colors.grey[400] : Colors.grey[700],
                   ),
                   const SizedBox(width: 4),
-                  Text(
-                    location,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isDarkMode ? Colors.grey[400] : Colors.grey[700],
+                  Flexible(
+                    child: Text(
+                      location,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDarkMode ? Colors.grey[400] : Colors.grey[700],
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 4), // Reduced from 6 to 4
               Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.star,
                     size: 14,
                     color: Colors.amber,
@@ -716,29 +729,29 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              const Spacer(),
-              InkWell(
-                onTap: () {
-                  // View college details
-                },
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  decoration: BoxDecoration(
-                    color: isDarkMode ? Colors.tealAccent.withOpacity(0.7) : textColors[index % textColors.length],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'View Details',
-                      style: TextStyle(
-                        color: isDarkMode ? Colors.black : Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                      ),
+              const SizedBox(height: 8), // Use a fixed size instead of Spacer
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // View college details
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    backgroundColor: isDarkMode
+                        ? Colors.tealAccent.withOpacity(0.8)
+                        : textColors[index % textColors.length],
+                    foregroundColor: isDarkMode ? Colors.black : Colors.white,
+                    textStyle: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
                     ),
                   ),
+                  child: const Text('View Details'),
                 ),
               ),
             ],
@@ -747,7 +760,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-  
+
   Widget _buildTrendingCollegeCard({
     required BuildContext context,
     required String collegeName,
@@ -770,7 +783,13 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               height: 100,
               decoration: BoxDecoration(
-                color: [Colors.blue, Colors.green, Colors.orange, Colors.purple, Colors.teal][imageIndex % 5],
+                color: [
+                  Colors.blue,
+                  Colors.green,
+                  Colors.orange,
+                  Colors.purple,
+                  Colors.teal
+                ][imageIndex % 5],
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
@@ -778,7 +797,13 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: Center(
                 child: Icon(
-                  [Icons.school, Icons.account_balance, Icons.apartment, Icons.business, Icons.domain][imageIndex % 5],
+                  [
+                    Icons.school,
+                    Icons.account_balance,
+                    Icons.apartment,
+                    Icons.business,
+                    Icons.domain
+                  ][imageIndex % 5],
                   color: Colors.white,
                   size: 40,
                 ),
@@ -792,7 +817,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: Colors.red[400],
                           borderRadius: BorderRadius.circular(12),
@@ -808,7 +834,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(width: 6),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: Colors.green[400],
                           borderRadius: BorderRadius.circular(12),
@@ -880,7 +907,8 @@ class CollegeSearchDelegate extends SearchDelegate {
       ),
       inputDecorationTheme: InputDecorationTheme(
         border: InputBorder.none,
-        hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5)),
+        hintStyle:
+            TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5)),
       ),
     );
   }
