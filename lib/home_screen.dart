@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+// Import screens
+import 'profile_screen.dart';
+// You'll need to create these other screens
+// import 'explore_screen.dart';
+// import 'saved_colleges_screen.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -13,11 +19,33 @@ class _HomeScreenState extends State<HomeScreen> {
   final SupabaseClient supabase = Supabase.instance.client;
   String userName = '';
   String userEmail = '';
+  
+  // For bottom navigation
+  int _selectedIndex = 0;
+  final PageController _pageController = PageController();
+  
+  // List of screens for bottom navigation
+  late final List<Widget> _screens;
 
   @override
   void initState() {
     super.initState();
     fetchUserData();
+    
+    // Initialize screens for bottom navigation
+    _screens = [
+      _buildHomeContent(),
+      // Create placeholder widgets for other tabs (to be replaced with actual screens)
+      const Center(child: Text('Explore Screen - Coming Soon')),
+      const Center(child: Text('Saved Colleges - Coming Soon')),
+      const ProfileScreen(), // Use the profile screen we created
+    ];
+  }
+  
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   Future<void> fetchUserData() async {
@@ -38,7 +66,63 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> logout() async {
     await supabase.auth.signOut();
     // Navigate to login screen
+    if (!mounted) return;
     Navigator.of(context).pushReplacementNamed('/login'); // Adjust this to your actual login route
+  }
+  
+  // Navigate to profile screen
+  void navigateToProfile() {
+    setState(() {
+      _selectedIndex = 3;
+      _pageController.jumpToPage(3);
+    });
+  }
+  
+  // Navigate to saved colleges
+  void navigateToSavedColleges() {
+    setState(() {
+      _selectedIndex = 2;
+      _pageController.jumpToPage(2);
+    });
+  }
+  
+  // Navigate to college ranking screen
+  void navigateToCollegeRankings() {
+    // You can implement navigation to a specific college rankings screen
+    // For now, navigate to explore tab
+    setState(() {
+      _selectedIndex = 1;
+      _pageController.jumpToPage(1);
+    });
+  }
+  
+  // Navigate to college comparison screen
+  void navigateToCollegeComparison() {
+    // You can implement navigation to a specific college comparison screen
+    // For now, navigate to explore tab
+    setState(() {
+      _selectedIndex = 1;
+      _pageController.jumpToPage(1);
+    });
+  }
+  
+  // Navigate to recommendations screen
+  void navigateToRecommendations() {
+    // You can implement navigation to a specific recommendations screen
+    // For now, we'll just show a dialog
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Recommendations'),
+        content: const Text('Personalized recommendations feature coming soon!'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -51,7 +135,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 primary: Colors.indigo,
                 secondary: Colors.tealAccent,
                 surface: Colors.grey[850]!,
-                background: Colors.grey[900]!,
               ),
               cardTheme: CardTheme(
                 elevation: 6,
@@ -79,7 +162,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 primary: Colors.indigo,
                 secondary: Colors.tealAccent,
                 surface: Colors.white,
-                background: Colors.grey[100]!,
               ),
               cardTheme: CardTheme(
                 elevation: 4,
@@ -102,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
       child: Scaffold(
-        appBar: AppBar(
+        appBar: _selectedIndex == 0 ? AppBar(
           title: const Text(
             'College Finder',
             style: TextStyle(fontWeight: FontWeight.bold),
@@ -122,256 +204,69 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: const Icon(Icons.notifications_outlined),
               onPressed: () {
                 // Add notification functionality
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Notifications feature coming soon!'),
+                  ),
+                );
               },
             ),
           ],
-        ),
-        body: RefreshIndicator(
-          onRefresh: () async {
-            await fetchUserData();
-            // Add logic to refresh college data
+        ) : null, // Only show app bar on home screen
+        body: PageView(
+          controller: _pageController,
+          physics: const NeverScrollableScrollPhysics(),
+          onPageChanged: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
           },
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Greeting section
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Hello, ${userName.split(" ").first}!',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color:
-                                isDarkMode ? Colors.white : Colors.indigo[800],
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Find your perfect college match',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: isDarkMode
-                                ? Colors.grey[400]
-                                : Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // College Recommendation Card
-                  Card(
-                    elevation: 8,
-                    shadowColor: Colors.indigo.withOpacity(0.3),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        // Add logic for college recommendation
-                      },
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.indigo[700]!,
-                              Colors.indigo[400]!,
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Icon(
-                                Icons.school_rounded,
-                                color: Colors.white,
-                                size: 36,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            const Text(
-                              'Personalized Recommendation',
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Discover colleges that match your preferences and academic profile',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.white,
-                                height: 1.4,
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 12,
-                                horizontal: 20,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: Text(
-                                'Get Recommendations',
-                                style: TextStyle(
-                                  color: Colors.indigo[700],
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Quick Actions Row
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildQuickActionCard(
-                          icon: Icons.leaderboard_rounded,
-                          title: 'College Rankings',
-                          color: Colors.orange,
-                          onTap: () {
-                            // Add logic for ranking of colleges
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _buildQuickActionCard(
-                          icon: Icons.compare_rounded,
-                          title: 'Compare Colleges',
-                          color: Colors.green,
-                          onTap: () {
-                            // Add logic for college comparison
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Saved Colleges Section
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Saved Colleges',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: isDarkMode ? Colors.white : Colors.indigo[800],
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          // View all saved colleges
-                        },
-                        child: const Text('View All'),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Saved Colleges Grid - FIXED OVERFLOW ISSUE HERE
-                  GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.75, // Increased from 0.8 to give more height
-                      mainAxisSpacing: 16,
-                      crossAxisSpacing: 16,
-                    ),
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: 4,
-                    itemBuilder: (context, index) {
-                      return _buildCollegeCard(
-                        context: context,
-                        collegeName: 'University ${index + 1}',
-                        location: 'City, State',
-                        rating: '4.${index + 2}',
-                        isFavorite: true,
-                        index: index,
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Trending Colleges Section
-                  Text(
-                    'Trending Colleges',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: isDarkMode ? Colors.white : Colors.indigo[800],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  SizedBox(
-                    height: 220,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 5,
-                      itemBuilder: (context, index) {
-                        return _buildTrendingCollegeCard(
-                          context: context,
-                          collegeName: 'Trending University ${index + 1}',
-                          location: 'Major City, State',
-                          ranking: '#${index + 1}',
-                          acceptanceRate: '${85 - index * 5}%',
-                          imageIndex: index,
-                        );
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(height: 40),
-                ],
-              ),
-            ),
-          ),
+          children: _screens,
         ),
-        floatingActionButton: FloatingActionButton(
+        floatingActionButton: _selectedIndex == 0 ? FloatingActionButton(
           onPressed: () {
             // Add college filtering/advanced search
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              builder: (context) {
+                return Container(
+                  padding: const EdgeInsets.all(20),
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Filter Colleges',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: isDarkMode ? Colors.white : Colors.indigo[800],
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      const Text('Filter options coming soon!'),
+                    ],
+                  ),
+                );
+              },
+            );
           },
           backgroundColor: isDarkMode ? Colors.tealAccent : Colors.indigo,
           child: const Icon(Icons.filter_list),
-        ),
+        ) : null, // Only show FAB on home screen
         drawer: Drawer(
           child: Container(
             color: isDarkMode ? Colors.grey[900] : Colors.white,
@@ -411,35 +306,53 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: 'Home',
                   onTap: () {
                     Navigator.pop(context);
+                    setState(() {
+                      _selectedIndex = 0;
+                      _pageController.jumpToPage(0);
+                    });
                   },
-                  isSelected: true,
+                  isSelected: _selectedIndex == 0,
                 ),
                 _buildDrawerItem(
                   icon: Icons.person_outline,
                   title: 'My Profile',
                   onTap: () {
-                    // Add logic for profile
+                    Navigator.pop(context);
+                    navigateToProfile();
                   },
+                  isSelected: _selectedIndex == 3,
                 ),
                 _buildDrawerItem(
                   icon: Icons.favorite_outline,
                   title: 'Saved Colleges',
                   onTap: () {
-                    // Add logic for saved colleges
+                    Navigator.pop(context);
+                    navigateToSavedColleges();
                   },
+                  isSelected: _selectedIndex == 2,
                 ),
                 _buildDrawerItem(
                   icon: Icons.history,
                   title: 'Application History',
                   onTap: () {
-                    // Add logic for application history
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Application history feature coming soon!'),
+                      ),
+                    );
                   },
                 ),
                 _buildDrawerItem(
                   icon: Icons.calendar_month_outlined,
                   title: 'Deadlines',
                   onTap: () {
-                    // Add logic for deadlines
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Deadlines feature coming soon!'),
+                      ),
+                    );
                   },
                 ),
                 const Divider(),
@@ -473,14 +386,24 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: Icons.settings_outlined,
                   title: 'Settings',
                   onTap: () {
-                    // Add logic for settings
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Settings feature coming soon!'),
+                      ),
+                    );
                   },
                 ),
                 _buildDrawerItem(
                   icon: Icons.help_outline,
                   title: 'Help & Support',
                   onTap: () {
-                    // Add logic for help
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Help & Support feature coming soon!'),
+                      ),
+                    );
                   },
                 ),
                 _buildDrawerItem(
@@ -512,10 +435,248 @@ class _HomeScreenState extends State<HomeScreen> {
               label: 'Profile',
             ),
           ],
-          selectedIndex: 0,
+          selectedIndex: _selectedIndex,
           onDestinationSelected: (index) {
-            // Handle bottom navigation
+            setState(() {
+              _selectedIndex = index;
+              _pageController.jumpToPage(index);
+            });
           },
+        ),
+      ),
+    );
+  }
+
+  // Build the home content - extracted to a separate method for clarity
+  Widget _buildHomeContent() {
+    return RefreshIndicator(
+      onRefresh: () async {
+        await fetchUserData();
+        // Add logic to refresh college data
+      },
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Greeting section
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Hello, ${userName.split(" ").first}!',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color:
+                            isDarkMode ? Colors.white : Colors.indigo[800],
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Find your perfect college match',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isDarkMode
+                            ? Colors.grey[400]
+                            : Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // College Recommendation Card
+              Card(
+                elevation: 8,
+                shadowColor: Colors.indigo.withOpacity(0.3),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: InkWell(
+                  onTap: navigateToRecommendations,
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.indigo[700]!,
+                          Colors.indigo[400]!,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.school_rounded,
+                            color: Colors.white,
+                            size: 36,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Personalized Recommendation',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Discover colleges that match your preferences and academic profile',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                            height: 1.4,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 20,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: Text(
+                            'Get Recommendations',
+                            style: TextStyle(
+                              color: Colors.indigo[700],
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Quick Actions Row
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildQuickActionCard(
+                      icon: Icons.leaderboard_rounded,
+                      title: 'College Rankings',
+                      color: Colors.orange,
+                      onTap: navigateToCollegeRankings,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildQuickActionCard(
+                      icon: Icons.compare_rounded,
+                      title: 'Compare Colleges',
+                      color: Colors.green,
+                      onTap: navigateToCollegeComparison,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
+              // Saved Colleges Section
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Saved Colleges',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: isDarkMode ? Colors.white : Colors.indigo[800],
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: navigateToSavedColleges,
+                    child: const Text('View All'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Saved Colleges Grid
+              GridView.builder(
+                gridDelegate:
+                    const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.75, // Increased from 0.8 to give more height
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                ),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: 4,
+                itemBuilder: (context, index) {
+                  return _buildCollegeCard(
+                    context: context,
+                    collegeName: 'University ${index + 1}',
+                    location: 'City, State',
+                    rating: '4.${index + 2}',
+                    isFavorite: true,
+                    index: index,
+                  );
+                },
+              ),
+
+              const SizedBox(height: 24),
+
+              // Trending Colleges Section
+              Text(
+                'Trending Colleges',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: isDarkMode ? Colors.white : Colors.indigo[800],
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              SizedBox(
+                height: 220,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    return _buildTrendingCollegeCard(
+                      context: context,
+                      collegeName: 'Trending University ${index + 1}',
+                      location: 'Major City, State',
+                      ranking: '#${index + 1}',
+                      acceptanceRate: '${85 - index * 5}%',
+                      imageIndex: index,
+                    );
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );
@@ -668,6 +829,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsets.zero,
                     onPressed: () {
                       // Toggle favorite
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(isFavorite 
+                            ? 'Removed from favorites' 
+                            : 'Added to favorites'
+                          ),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
                     },
                   ),
                 ],
@@ -735,6 +905,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     // View college details
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(collegeName),
+                        content: const Text('College details coming soon!'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Close'),
+                          ),
+                        ],
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 6),
@@ -777,105 +960,129 @@ class _HomeScreenState extends State<HomeScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 100,
-              decoration: BoxDecoration(
-                color: [
-                  Colors.blue,
-                  Colors.green,
-                  Colors.orange,
-                  Colors.purple,
-                  Colors.teal
-                ][imageIndex % 5],
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
-              ),
-              child: Center(
-                child: Icon(
-                  [
-                    Icons.school,
-                    Icons.account_balance,
-                    Icons.apartment,
-                    Icons.business,
-                    Icons.domain
-                  ][imageIndex % 5],
-                  color: Colors.white,
-                  size: 40,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.red[400],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          ranking,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.green[400],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          acceptanceRate,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    collegeName,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: isDarkMode ? Colors.white : Colors.black87,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    location,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isDarkMode ? Colors.grey[400] : Colors.grey[700],
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+        child: InkWell(
+          onTap: () {
+            // View college details
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text(collegeName),
+                content: const Text('Trending college details coming soon!'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Close'),
                   ),
                 ],
               ),
-            ),
-          ],
+            );
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 100,
+                decoration: BoxDecoration(
+                  color: [
+                    Colors.blue,
+                    Colors.green,
+                    Colors.orange,
+                    Colors.purple,
+                    Colors.teal
+                  ][imageIndex % 5],
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
+                ),
+                child: Center(
+                  child: Icon(
+                    [
+                      Icons.school,
+                      Icons.account_balance,
+                      Icons.apartment,
+                      Icons.business,
+                      Icons.domain
+                    ][imageIndex % 5],
+                    color: Colors.white,
+                    size: 48,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      collegeName,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: isDarkMode ? Colors.white : Colors.black87,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on,
+                          size: 14,
+                          color: isDarkMode ? Colors.grey[400] : Colors.grey[700],
+                        ),
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: Text(
+                            location,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isDarkMode ? Colors.grey[400] : Colors.grey[700],
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.indigo.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            ranking,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: isDarkMode ? Colors.white : Colors.indigo,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          acceptanceRate,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: isDarkMode ? Colors.grey[300] : Colors.grey[800],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -883,35 +1090,19 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 // Search functionality
-class CollegeSearchDelegate extends SearchDelegate {
+class CollegeSearchDelegate extends SearchDelegate<String> {
   final List<String> collegeNames = [
     'Harvard University',
     'Stanford University',
     'MIT',
-    'Princeton University',
     'Yale University',
+    'Princeton University',
     'Columbia University',
+    'University of California, Berkeley',
     'University of Chicago',
     'University of Pennsylvania',
-    'California Institute of Technology',
     'Duke University',
   ];
-
-  @override
-  ThemeData appBarTheme(BuildContext context) {
-    final theme = Theme.of(context);
-    return theme.copyWith(
-      appBarTheme: AppBarTheme(
-        backgroundColor: theme.colorScheme.surface,
-        iconTheme: IconThemeData(color: theme.colorScheme.onSurface),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        border: InputBorder.none,
-        hintStyle:
-            TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5)),
-      ),
-    );
-  }
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -930,7 +1121,7 @@ class CollegeSearchDelegate extends SearchDelegate {
     return IconButton(
       icon: const Icon(Icons.arrow_back),
       onPressed: () {
-        close(context, null);
+        close(context, '');
       },
     );
   }
@@ -941,35 +1132,41 @@ class CollegeSearchDelegate extends SearchDelegate {
         .where((college) => college.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
-    return ListView.builder(
-      itemCount: results.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(results[index]),
-          onTap: () {
-            // Show college details
-            close(context, results[index]);
-          },
-        );
-      },
-    );
+    return _buildSearchResultsList(context, results);
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final suggestions = collegeNames
-        .where((college) => college.toLowerCase().contains(query.toLowerCase()))
-        .toList();
+    final suggestions = query.isEmpty
+        ? collegeNames
+        : collegeNames
+            .where((college) => college.toLowerCase().contains(query.toLowerCase()))
+            .toList();
 
+    return _buildSearchResultsList(context, suggestions);
+  }
+
+  Widget _buildSearchResultsList(BuildContext context, List<String> colleges) {
     return ListView.builder(
-      itemCount: suggestions.length,
+      itemCount: colleges.length,
       itemBuilder: (context, index) {
         return ListTile(
           leading: const Icon(Icons.school),
-          title: Text(suggestions[index]),
+          title: Text(colleges[index]),
           onTap: () {
-            query = suggestions[index];
-            showResults(context);
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text(colleges[index]),
+                content: const Text('College details coming soon!'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Close'),
+                  ),
+                ],
+              ),
+            );
           },
         );
       },
