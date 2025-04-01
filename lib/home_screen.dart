@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 // Import screens
 import 'profile_screen.dart';
 // You'll need to create these other screens
-// import 'explore_screen.dart';
+import 'explore_screen.dart';
 // import 'saved_colleges_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,11 +19,11 @@ class _HomeScreenState extends State<HomeScreen> {
   final SupabaseClient supabase = Supabase.instance.client;
   String userName = '';
   String userEmail = '';
-  
+
   // For bottom navigation
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
-  
+
   // List of screens for bottom navigation
   late final List<Widget> _screens;
 
@@ -31,17 +31,17 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     fetchUserData();
-    
+
     // Initialize screens for bottom navigation
     _screens = [
       _buildHomeContent(),
       // Create placeholder widgets for other tabs (to be replaced with actual screens)
-      const Center(child: Text('Explore Screen - Coming Soon')),
+      const ExploreScreen(),
       const Center(child: Text('Saved Colleges - Coming Soon')),
       const ProfileScreen(), // Use the profile screen we created
     ];
   }
-  
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -67,9 +67,10 @@ class _HomeScreenState extends State<HomeScreen> {
     await supabase.auth.signOut();
     // Navigate to login screen
     if (!mounted) return;
-    Navigator.of(context).pushReplacementNamed('/login'); // Adjust this to your actual login route
+    Navigator.of(context).pushReplacementNamed(
+        '/login'); // Adjust this to your actual login route
   }
-  
+
   // Navigate to profile screen
   void navigateToProfile() {
     setState(() {
@@ -77,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _pageController.jumpToPage(3);
     });
   }
-  
+
   // Navigate to saved colleges
   void navigateToSavedColleges() {
     setState(() {
@@ -85,17 +86,15 @@ class _HomeScreenState extends State<HomeScreen> {
       _pageController.jumpToPage(2);
     });
   }
-  
+
   // Navigate to college ranking screen
-  void navigateToCollegeRankings() {
-    // You can implement navigation to a specific college rankings screen
-    // For now, navigate to explore tab
+  void navigateToExploreScreen() {
     setState(() {
-      _selectedIndex = 1;
-      _pageController.jumpToPage(1);
+      _selectedIndex = 1; // Update the index to 1 for the explore screen
+      _pageController.jumpToPage(1); // Jump to the explore screen page
     });
   }
-  
+
   // Navigate to college comparison screen
   void navigateToCollegeComparison() {
     // You can implement navigation to a specific college comparison screen
@@ -105,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _pageController.jumpToPage(1);
     });
   }
-  
+
   // Navigate to recommendations screen
   void navigateToRecommendations() {
     // You can implement navigation to a specific recommendations screen
@@ -114,7 +113,8 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Recommendations'),
-        content: const Text('Personalized recommendations feature coming soon!'),
+        content:
+            const Text('Personalized recommendations feature coming soon!'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -184,35 +184,37 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
       child: Scaffold(
-        appBar: _selectedIndex == 0 ? AppBar(
-          title: const Text(
-            'College Finder',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                // Keep original search logic
-                showSearch(
-                  context: context,
-                  delegate: CollegeSearchDelegate(),
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.notifications_outlined),
-              onPressed: () {
-                // Add notification functionality
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Notifications feature coming soon!'),
+        appBar: _selectedIndex == 0
+            ? AppBar(
+                title: const Text(
+                  'College Finder',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () {
+                      // Keep original search logic
+                      showSearch(
+                        context: context,
+                        delegate: CollegeSearchDelegate(),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
-          ],
-        ) : null, // Only show app bar on home screen
+                  IconButton(
+                    icon: const Icon(Icons.notifications_outlined),
+                    onPressed: () {
+                      // Add notification functionality
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Notifications feature coming soon!'),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              )
+            : null, // Only show app bar on home screen
         body: PageView(
           controller: _pageController,
           physics: const NeverScrollableScrollPhysics(),
@@ -223,50 +225,55 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           children: _screens,
         ),
-        floatingActionButton: _selectedIndex == 0 ? FloatingActionButton(
-          onPressed: () {
-            // Add college filtering/advanced search
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              builder: (context) {
-                return Container(
-                  padding: const EdgeInsets.all(20),
-                  height: MediaQuery.of(context).size.height * 0.7,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Filter Colleges',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: isDarkMode ? Colors.white : Colors.indigo[800],
+        floatingActionButton: _selectedIndex == 0
+            ? FloatingActionButton(
+                onPressed: () {
+                  // Add college filtering/advanced search
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(20)),
+                    ),
+                    builder: (context) {
+                      return Container(
+                        padding: const EdgeInsets.all(20),
+                        height: MediaQuery.of(context).size.height * 0.7,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Filter Colleges',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: isDarkMode
+                                        ? Colors.white
+                                        : Colors.indigo[800],
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.close),
+                                  onPressed: () => Navigator.pop(context),
+                                ),
+                              ],
                             ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      const Text('Filter options coming soon!'),
-                    ],
-                  ),
-                );
-              },
-            );
-          },
-          backgroundColor: isDarkMode ? Colors.tealAccent : Colors.indigo,
-          child: const Icon(Icons.filter_list),
-        ) : null, // Only show FAB on home screen
+                            const SizedBox(height: 20),
+                            const Text('Filter options coming soon!'),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+                backgroundColor: isDarkMode ? Colors.tealAccent : Colors.indigo,
+                child: const Icon(Icons.filter_list),
+              )
+            : null, // Only show FAB on home screen
         drawer: Drawer(
           child: Container(
             color: isDarkMode ? Colors.grey[900] : Colors.white,
@@ -338,7 +345,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Application history feature coming soon!'),
+                        content:
+                            Text('Application history feature coming soon!'),
                       ),
                     );
                   },
@@ -472,8 +480,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color:
-                            isDarkMode ? Colors.white : Colors.indigo[800],
+                        color: isDarkMode ? Colors.white : Colors.indigo[800],
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -481,9 +488,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       'Find your perfect college match',
                       style: TextStyle(
                         fontSize: 16,
-                        color: isDarkMode
-                            ? Colors.grey[400]
-                            : Colors.grey[600],
+                        color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
                       ),
                     ),
                   ],
@@ -582,7 +587,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: Icons.leaderboard_rounded,
                       title: 'College Rankings',
                       color: Colors.orange,
-                      onTap: navigateToCollegeRankings,
+                      onTap: navigateToExploreScreen,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -621,10 +626,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
               // Saved Colleges Grid
               GridView.builder(
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.75, // Increased from 0.8 to give more height
+                  childAspectRatio:
+                      0.75, // Increased from 0.8 to give more height
                   mainAxisSpacing: 16,
                   crossAxisSpacing: 16,
                 ),
@@ -831,10 +836,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       // Toggle favorite
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(isFavorite 
-                            ? 'Removed from favorites' 
-                            : 'Added to favorites'
-                          ),
+                          content: Text(isFavorite
+                              ? 'Removed from favorites'
+                              : 'Added to favorites'),
                           duration: const Duration(seconds: 1),
                         ),
                       );
@@ -1031,7 +1035,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         Icon(
                           Icons.location_on,
                           size: 14,
-                          color: isDarkMode ? Colors.grey[400] : Colors.grey[700],
+                          color:
+                              isDarkMode ? Colors.grey[400] : Colors.grey[700],
                         ),
                         const SizedBox(width: 4),
                         Flexible(
@@ -1039,7 +1044,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             location,
                             style: TextStyle(
                               fontSize: 12,
-                              color: isDarkMode ? Colors.grey[400] : Colors.grey[700],
+                              color: isDarkMode
+                                  ? Colors.grey[400]
+                                  : Colors.grey[700],
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -1073,7 +1080,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: isDarkMode ? Colors.grey[300] : Colors.grey[800],
+                            color: isDarkMode
+                                ? Colors.grey[300]
+                                : Colors.grey[800],
                           ),
                         ),
                       ],
@@ -1140,7 +1149,8 @@ class CollegeSearchDelegate extends SearchDelegate<String> {
     final suggestions = query.isEmpty
         ? collegeNames
         : collegeNames
-            .where((college) => college.toLowerCase().contains(query.toLowerCase()))
+            .where((college) =>
+                college.toLowerCase().contains(query.toLowerCase()))
             .toList();
 
     return _buildSearchResultsList(context, suggestions);
