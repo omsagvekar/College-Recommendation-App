@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 // Import screens
+import 'predict_college_screen.dart';
 import 'profile_screen.dart';
 // You'll need to create these other screens
 import 'explore_screen.dart';
@@ -37,7 +38,8 @@ class _HomeScreenState extends State<HomeScreen> {
       _buildHomeContent(),
       // Create placeholder widgets for other tabs (to be replaced with actual screens)
       const ExploreScreen(),
-      const Center(child: Text('Saved Colleges - Coming Soon')),
+      // const Center(child: Text('Saved Colleges - Coming Soon')),
+      const PredictCollegeScreen(),
       const ProfileScreen(), // Use the profile screen we created
     ];
   }
@@ -109,19 +111,29 @@ class _HomeScreenState extends State<HomeScreen> {
   void navigateToRecommendations() {
     // You can implement navigation to a specific recommendations screen
     // For now, we'll just show a dialog
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Recommendations'),
-        content:
-            const Text('Personalized recommendations feature coming soon!'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
+    // showDialog(
+    //   context: context,
+    //   builder: (context) => AlertDialog(
+    //     title: const Text('Recommendations'),
+    //     content:
+    //         const Text('Personalized recommendations feature coming soon!'),
+    //     actions: [
+    //       TextButton(
+    //         onPressed: () {
+    //           Navigator.pop(context); // Close the dialog
+    //           Navigator.pushNamed(context, '/predict_college_screen'); // Go to prediction screen
+    //         },
+    //         child: const Text('Guess the College'),
+    //       ),
+    //
+    //     ],
+    //   ),
+    // );
+    ElevatedButton(
+      onPressed: () {
+        Navigator.pushNamed(context, '/predict_college_screen');
+      },
+      child: Text('Get Recommendations'),
     );
   }
 
@@ -190,29 +202,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   'College Finder',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: () {
-                      // Keep original search logic
-                      showSearch(
-                        context: context,
-                        delegate: CollegeSearchDelegate(),
-                      );
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.notifications_outlined),
-                    onPressed: () {
-                      // Add notification functionality
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Notifications feature coming soon!'),
-                        ),
-                      );
-                    },
-                  ),
-                ],
               )
             : null, // Only show app bar on home screen
         body: PageView(
@@ -338,31 +327,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   isSelected: _selectedIndex == 2,
                 ),
-                _buildDrawerItem(
-                  icon: Icons.history,
-                  title: 'Application History',
-                  onTap: () {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content:
-                            Text('Application history feature coming soon!'),
-                      ),
-                    );
-                  },
-                ),
-                _buildDrawerItem(
-                  icon: Icons.calendar_month_outlined,
-                  title: 'Deadlines',
-                  onTap: () {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Deadlines feature coming soon!'),
-                      ),
-                    );
-                  },
-                ),
                 const Divider(),
                 Padding(
                   padding:
@@ -390,18 +354,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const Divider(),
-                _buildDrawerItem(
-                  icon: Icons.settings_outlined,
-                  title: 'Settings',
-                  onTap: () {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Settings feature coming soon!'),
-                      ),
-                    );
-                  },
-                ),
                 _buildDrawerItem(
                   icon: Icons.help_outline,
                   title: 'Help & Support',
@@ -435,8 +387,8 @@ class _HomeScreenState extends State<HomeScreen> {
               label: 'Explore',
             ),
             NavigationDestination(
-              icon: Icon(Icons.bookmark_outline),
-              label: 'Saved',
+              icon: Icon(Icons.search),
+              label: 'Find',
             ),
             NavigationDestination(
               icon: Icon(Icons.person_outline),

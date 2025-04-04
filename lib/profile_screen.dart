@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'app_drawer.dart';
+import 'user_services.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -17,6 +19,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String userId = '';
   bool isLoading = true;
   bool isDarkMode = false;
+  String _userName = '';
+  String _userEmail = '';
   
   // User responses data
   String? stream12th;
@@ -37,7 +41,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadUserDetails(); // Load user name and email
+    });
     loadUserData();
+  }
+  void _loadUserDetails() async {
+    final userData = await fetchUserData();
+    setState(() {
+      _userName = userData['full_name'] ?? 'User Name';
+      _userEmail = userData['email'] ?? 'user@example.com';
+    });
   }
 
   @override
@@ -205,6 +219,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
               tooltip: 'Refresh Profile',
             ),
           ],
+        ),
+        drawer: AppDrawer(
+          userName: _userName, // Replace with actual name from user data
+          userEmail: _userEmail, // Replace with actual email
+          isDarkMode: Theme.of(context).brightness == Brightness.dark,
+          onThemeToggle: (isDark) {
+            // TODO: implement actual theme change logic here
+            print("Theme toggled: $isDark");
+          },
+          onLogout: () {
+            // TODO: implement logout logic
+            print("Logout clicked");
+          },
+          onSelectTab: (index) {
+            // Optional: You can use Navigator.pushReplacement here if needed
+            print("Tab selected: $index");
+          },
+          navigateToProfile: () {
+            // Navigator.pushNamed(context, '/profile'); // Example
+          },
+          navigateToSavedColleges: () {
+            // Navigator.pushNamed(context, '/saved-colleges'); // Example
+          },
         ),
         body: isLoading
             ? const Center(child: CircularProgressIndicator())
