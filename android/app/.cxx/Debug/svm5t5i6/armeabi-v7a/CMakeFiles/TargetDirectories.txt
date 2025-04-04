@@ -1,0 +1,2 @@
+E:/College-Recommendation-App/android/app/.cxx/Debug/svm5t5i6/armeabi-v7a/CMakeFiles/edit_cache.dir
+E:/College-Recommendation-App/android/app/.cxx/Debug/svm5t5i6/armeabi-v7a/CMakeFiles/rebuild_cache.dir

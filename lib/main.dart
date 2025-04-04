@@ -4,6 +4,7 @@ import 'signup_screen.dart'; // Import the SignUpScreen
 import 'supabase.dart'; // Import the Supabase config file
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'home_screen.dart'; // Import the HomeScreen
+import 'predict_college_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding
@@ -28,12 +29,19 @@ class CollegeRecommendationApp extends StatelessWidget {
       title: 'College Recommendation App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        brightness: Brightness.dark, // Dark theme
+        brightness: Brightness.dark,
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: SplashScreen(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => SplashScreen(),
+        '/predict_college_screen': (context) => PredictCollegeScreen(),
+        '/home': (context) => HomeScreen(),
+        '/signup': (context) => SignUpScreen(),
+      },
     );
+
   }
 }
 
