@@ -2,9 +2,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseConfig {
   static const String url =
-      'https://whvvjpfxuciljriqnpxz.supabase.co'; // Replace with your Supabase URL
+      'Replace with your Supabase URL'; // Replace with your Supabase URL
   static const String key =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndodnZqcGZ4dWNpbGpyaXFucHh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgyNjAzOTEsImV4cCI6MjA1MzgzNjM5MX0.6_Upw_kKVF3kplHsFeYJ6r294yz-YYCP8gyRyinqKCU'; // Replace with your Supabase public API key
+      'Replace with your Supabase public API key'; // Replace with your Supabase public API key
 
   static Future<void> initialize() async {
     try {
