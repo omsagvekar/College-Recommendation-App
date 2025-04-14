@@ -33,7 +33,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
   String _userEmail = '';
 
   // Pagination variables
-  int _pageSize = 1000;
+  final int _pageSize = 1000;
   int _currentPage = 0;
   bool _hasMore = true;
   bool _isLoadingMore = false;
@@ -499,7 +499,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                         ),
                       ),
                     );
-                  }).toList(),
+                  }),
                   if (uniqueExamTypes.length > 2)
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -741,7 +741,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           ],
                         ),
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               ),

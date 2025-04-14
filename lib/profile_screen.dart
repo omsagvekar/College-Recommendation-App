@@ -374,7 +374,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               icon: Icons.calendar_today,
                               title: 'Account Created',
                               subtitle: createdAt != null
-                                  ? '${_formatDate(createdAt!)}' 
+                                  ? _formatDate(createdAt!) 
                                   : 'Unknown',
                             ),
                             _buildActivityItem(

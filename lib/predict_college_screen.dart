@@ -204,10 +204,10 @@ class _PredictCollegeScreenState extends State<PredictCollegeScreen> {
           print("Tab selected: $index");
         },
         navigateToProfile: () {
-          // Navigator.pushNamed(context, '/profile'); // Example
+          Navigator.pushNamed(context, '/profile'); // Example
         },
         navigateToSavedColleges: () {
-          // Navigator.pushNamed(context, '/saved-colleges'); // Example
+          Navigator.pushNamed(context, '/saved-colleges'); // Example
         },
       ),
       body: _isLoading
